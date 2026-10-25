@@ -35,7 +35,7 @@ F1 & ESC:: ExitApp()
     }
 
     ; Retrieve the monitor work area (excludes taskbar)
-    area := GetWorkArea()
+    area := Window.GetWorkArea()
 
     ; For half the area while preserving aspect ratio:
     ; Area = W * H => Half Area = (W / sqrt(2)) * (H / sqrt(2))
@@ -46,7 +46,7 @@ F1 & ESC:: ExitApp()
     newH := Round(area.h * scale)
 
     ; Move and resize the window
-    CenterWindow(hwnd, newW, newH)
+    Window.CenterWindow(hwnd, newW, newH)
 }
 
 ; Hotkey 2: Ctrl + Alt + C (Center Only)
@@ -62,7 +62,7 @@ F1 & ESC:: ExitApp()
     }
 
     ; Retrieve the current size of the active window
-    hwndArea := GetWindowArea(hwnd)
+    hwndArea := Window.GetWindowArea(hwnd)
 
-    CenterWindow(hwnd, hwndArea.w, hwndArea.h)
+    Window.CenterWindow(hwnd, hwndArea.w, hwndArea.h)
 }

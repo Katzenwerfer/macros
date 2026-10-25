@@ -39,10 +39,10 @@ F1 & ESC:: ExitApp()
     WinGetPos(, , &targetHwndWidth, &targetHwndHeight, targetHwnd)
 
     ; Remove the title bar and border
-    SetWindowBorderless(targetHwnd, true)
+    Window.SetWindowBorderless(targetHwnd, true)
 
     ; Position at top-left and resize
-    area := GetWorkArea()
+    area := Window.GetWorkArea()
     WinMove(0, 0, area.w, area.h, targetHwnd)
 
     isTracking := true
@@ -55,9 +55,9 @@ F1 & ESC:: ExitApp()
     ; Restore only if tracking
     if (isTracking) {
         ; Restore the title bar and border
-        SetWindowBorderless(targetHwnd, false)
+        Window.SetWindowBorderless(targetHwnd, false)
         ; Position at center
-        CenterWindow(targetHwnd, targetHwndWidth, targetHwndHeight)
+        Window.CenterWindow(targetHwnd, targetHwndWidth, targetHwndHeight)
     }
 
     ; Cleanup global variables
