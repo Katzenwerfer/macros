@@ -1,6 +1,8 @@
 #Requires AutoHotkey v2.0
 #SingleInstance Force
 
+#include modules\window.ahk
+
 ; ---------------------
 ; === Configuration ===
 ; ---------------------
@@ -33,28 +35,18 @@ F1 & ESC:: ExitApp()
     }
 
     ; Retrieve the monitor work area (excludes taskbar)
-    MonitorGetWorkArea(MonitorGetPrimary(), &left, &top, &right, &bottom)
-
-    workWidth := right - left
-    workHeight := bottom - top
+    area := GetWorkArea()
 
     ; For half the area while preserving aspect ratio:
     ; Area = W * H => Half Area = (W / sqrt(2)) * (H / sqrt(2))
     ; For aspect-ratio scaling: Area = W * H.
     ; Therefore, linear scale = Sqrt(AreaPercent / 100)
     scale := Sqrt(AreaPercent / 100)
-    newW := Round(workWidth * scale)
-    newH := Round(workHeight * scale)
-
-    ; Calculate centered coordinates
-    newX := Round(left + (workWidth - newW) / 2)
-    newY := Round(top + (workHeight - newH) / 2)
+    newW := Round(area.w * scale)
+    newH := Round(area.h * scale)
 
     ; Move and resize the window
-    WinMove(newX, newY, newW, newH, hwnd)
-
-    ; Redraw the window frame to apply style changes cleanly
-    WinRedraw(hwnd)
+    CenterWindow(hwnd, newW, newH)
 }
 
 ; Hotkey 2: Ctrl + Alt + C (Center Only)
@@ -70,22 +62,7 @@ F1 & ESC:: ExitApp()
     }
 
     ; Retrieve the current size of the active window
-    WinGetPos(, , &winW, &winH, hwnd)
+    hwndArea := GetWindowArea(hwnd)
 
-    ; Retrieve the monitor work area (excludes taskbar)
-    ; To use the entire screen including the taskbar, use MonitorGet() instead
-    MonitorGetWorkArea(MonitorGetPrimary(), &left, &top, &right, &bottom)
-
-    workWidth := right - left
-    workHeight := bottom - top
-
-    ; Calculate centered position based on existing window dimensions
-    newX := Round(left + (workWidth - winW) / 2)
-    newY := Round(top + (workHeight - winH) / 2)
-
-    ; Move without altering dimensions
-    WinMove(newX, newY, , , hwnd)
-
-    ; Redraw the window frame to apply style changes cleanly
-    WinRedraw(hwnd)
+    CenterWindow(hwnd, hwndArea.w, hwndArea.h)
 }

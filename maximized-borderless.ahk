@@ -1,6 +1,8 @@
 #Requires AutoHotkey v2.0
 #SingleInstance Force
 
+#Include modules\window.ahk
+
 ; ------------------------
 ; === Global variables ===
 ; ------------------------
@@ -63,34 +65,4 @@ F1 & ESC:: ExitApp()
     targetHwndWidth := 0
     targetHwndHeight := 0
     isTracking := false
-}
-
-; -----------------
-; === Functions ===
-; -----------------
-
-; Retrieve the desktop work area (excluding taskbar)
-GetWorkArea() {
-    MonitorGetWorkArea(MonitorGetPrimary(), &left, &top, &right, &bottom)
-    return {
-        x: left,
-        y: top,
-        w: right - left,
-        h: bottom - top
-    }
-}
-
-; Remove the title bar and border
-SetWindowBorderless(hwnd, borderless := true) {
-    WinSetStyle((borderless ? "-" : "+") . "0xC40000", hwnd)
-    WinRedraw(hwnd)
-}
-
-; Position at the center of the work area
-CenterWindow(hwnd, hwndWidth, hwndHeight) {
-    bounds := GetWorkArea()
-    x := Round(bounds.x + (bounds.w - hwndWidth) / 2)
-    y := Round(bounds.y + (bounds.h - hwndHeight) / 2)
-    WinMove(x, y, hwndWidth, hwndHeight, hwnd)
-    WinRedraw(hwnd)
 }
