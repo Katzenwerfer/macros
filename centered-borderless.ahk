@@ -44,10 +44,10 @@ F1 & ESC:: ExitApp()
     WinGetClientPos(, , &winCliW, &winCliH, targetHwnd)
 
     ; Remove the title bar and border
-    SetWindowBorderless(targetHwnd, true)
+    Window.SetWindowBorderless(targetHwnd, true)
 
     ; Position at center and resize
-    CenterWindow(targetHwnd, winCliW, winCliH)
+    Window.CenterWindow(targetHwnd, winCliW, winCliH)
 
     ; Create a dark background
     CreateBackground()
@@ -100,7 +100,7 @@ CreateBackground() {
     bgGui.BackColor := "000000"
 
     ; Cover the virtual screen (all monitors)
-    area := GetMonitorArea()
+    area := Window.GetMonitorArea()
     bgGui.Show(Format("x{} y{} w{} h{} NoActivate", area.x, area.y, area.w, area.h))
 
     ; Place directly behind the target window in Z-order
