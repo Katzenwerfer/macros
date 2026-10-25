@@ -36,20 +36,12 @@ F1 & ESC:: ExitApp()
     ; Retrieve the current size of the active window
     WinGetPos(, , &targetHwndWidth, &targetHwndHeight, targetHwnd)
 
-    ; Retrieve the monitor work area (excludes taskbar)
-    MonitorGetWorkArea(MonitorGetPrimary(), &left, &top, &right, &bottom)
-
-    workWidth := right - left
-    workHeight := bottom - top
-
     ; Remove the title bar and border
-    WinSetStyle("-0xC40000", targetHwnd)
+    SetWindowBorderless(targetHwnd, true)
 
     ; Position at top-left and resize
-    WinMove(0, 0, workWidth, workHeight, targetHwnd)
-
-    ; Redraw the window frame to apply style changes cleanly
-    WinRedraw(targetHwnd)
+    area := GetWorkArea()
+    WinMove(0, 0, area.w, area.h, targetHwnd)
 
     isTracking := true
 }
@@ -60,24 +52,10 @@ F1 & ESC:: ExitApp()
 
     ; Restore only if tracking
     if (isTracking) {
-        ; Retrieve the desktop work area (excluding taskbar)
-        MonitorGetWorkArea(MonitorGetPrimary(), &left, &top, &right, &bottom)
-
-        workWidth := right - left
-        workHeight := bottom - top
-
-        ; Calculate centered position based on stored window dimensions
-        newX := Round(left + (workWidth - targetHwndWidth) / 2)
-        newY := Round(top + (workHeight - targetHwndHeight) / 2)
-
-        ; Restore the title bar
-        WinSetStyle("+0xC40000", targetHwnd)
-
+        ; Restore the title bar and border
+        SetWindowBorderless(targetHwnd, false)
         ; Position at center
-        WinMove(newX, newY, targetHwndWidth, targetHwndHeight, targetHwnd)
-
-        ; Redraw the window frame to apply style changes cleanly
-        WinRedraw(targetHwnd)
+        CenterWindow(targetHwnd, targetHwndWidth, targetHwndHeight)
     }
 
     ; Cleanup global variables
@@ -85,4 +63,34 @@ F1 & ESC:: ExitApp()
     targetHwndWidth := 0
     targetHwndHeight := 0
     isTracking := false
+}
+
+; -----------------
+; === Functions ===
+; -----------------
+
+; Retrieve the desktop work area (excluding taskbar)
+GetWorkArea() {
+    MonitorGetWorkArea(MonitorGetPrimary(), &left, &top, &right, &bottom)
+    return {
+        x: left,
+        y: top,
+        w: right - left,
+        h: bottom - top
+    }
+}
+
+; Remove the title bar and border
+SetWindowBorderless(hwnd, borderless := true) {
+    WinSetStyle((borderless ? "-" : "+") . "0xC40000", hwnd)
+    WinRedraw(hwnd)
+}
+
+; Position at the center of the work area
+CenterWindow(hwnd, hwndWidth, hwndHeight) {
+    bounds := GetWorkArea()
+    x := Round(bounds.x + (bounds.w - hwndWidth) / 2)
+    y := Round(bounds.y + (bounds.h - hwndHeight) / 2)
+    WinMove(x, y, hwndWidth, hwndHeight, hwnd)
+    WinRedraw(hwnd)
 }
