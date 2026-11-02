@@ -10,7 +10,6 @@
 targetHwnd := 0
 targetHwndWidth := 0
 targetHwndHeight := 0
-isTracking := false
 
 ; ---------------
 ; === Hotkeys ===
@@ -23,10 +22,10 @@ F1 & ESC:: ExitApp()
 
 ; Hotkey: Press Alt + F12 while the target window is focused
 !F12:: {
-    global targetHwnd, targetHwndWidth, targetHwndHeight, isTracking
+    global targetHwnd, targetHwndWidth, targetHwndHeight
 
     ; Skip if already tracking
-    if (isTracking) {
+    if (targetHwnd != 0) {
         return
     }
 
@@ -49,16 +48,14 @@ F1 & ESC:: ExitApp()
     ; Position at top-left and resize
     area := Window.GetWorkArea()
     WinMove(0, 0, area.w, area.h, targetHwnd)
-
-    isTracking := true
 }
 
 ; Hotkey: Press Shift + F12 to restore the original title bar
 +F12:: {
-    global targetHwnd, targetHwndWidth, targetHwndHeight, isTracking
+    global targetHwnd, targetHwndWidth, targetHwndHeight
 
-    ; Restore only if tracking
-    if (isTracking) {
+    ; Restore only if target windows exists
+    if (WinExist("ahk_id " targetHwnd)) {
         ; Restore the title bar and border
         Window.SetWindowBorderless(targetHwnd, false)
         ; Position at center
@@ -69,5 +66,4 @@ F1 & ESC:: ExitApp()
     targetHwnd := 0
     targetHwndWidth := 0
     targetHwndHeight := 0
-    isTracking := false
 }

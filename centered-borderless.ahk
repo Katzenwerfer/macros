@@ -11,7 +11,6 @@ bgGui := ""
 targetHwnd := 0
 targetHwndWidth := 0
 targetHwndHeight := 0
-isTracking := false
 isBackdropVisible := false
 
 ; ---------------
@@ -25,10 +24,10 @@ F1 & ESC:: ExitApp()
 
 ; Hotkey: Press Alt + F12 while the target window is focused to center, remove decorations, and add a dark background behind it
 !F12:: {
-    global bgGui, targetHwnd, targetHwndWidth, targetHwndHeight, isTracking, isBackdropVisible
+    global bgGui, targetHwnd, targetHwndWidth, targetHwndHeight, isBackdropVisible
 
     ; Skip if already tracking
-    if (isTracking) {
+    if (targetHwnd != 0) {
         return
     }
 
@@ -56,8 +55,6 @@ F1 & ESC:: ExitApp()
 
     ; Create a dark background
     CreateBackground()
-
-    isTracking := true
     isBackdropVisible := true
 
     ; Monitor window focus and existence every 50ms
@@ -66,10 +63,10 @@ F1 & ESC:: ExitApp()
 
 ; Hotkey: Press Shift + F12 to restore the original title bar
 +F12:: {
-    global targetHwnd, targetHwndWidth, targetHwndHeight, isTracking
+    global targetHwnd, targetHwndWidth, targetHwndHeight
 
-    ; Restore only if tracking
-    if (isTracking) {
+    ; Restore only if target window exists
+    if (WinExist("ahk_id" targetHwnd)) {
         ; Restore the title bar and border
         Window.SetWindowBorderless(targetHwnd, false)
 
@@ -134,7 +131,7 @@ MonitorWindow() {
 }
 
 CleanupRuntime() {
-    global bgGui, targetHwnd, targetHwndWidth, targetHwndHeight, isTracking, isBackdropVisible
+    global bgGui, targetHwnd, targetHwndWidth, targetHwndHeight, isBackdropVisible
 
     ; Stop the timer
     SetTimer(MonitorWindow, 0)
@@ -148,6 +145,5 @@ CleanupRuntime() {
     targetHwnd := 0
     targetHwndWidth := 0
     targetHwndHeight := 0
-    isTracking := false
     isBackdropVisible := false
 }
